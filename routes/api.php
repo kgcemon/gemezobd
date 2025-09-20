@@ -53,7 +53,7 @@ Route::get('payment-method',[PaymentMethodController::class,'index']);
 
 //order
 Route::post('add-order',[OrdersController::class, 'store']);
-Route::get('my-orders',[UserOrderController::class,'userOrder']);
+Route::post('my-orders',[UserOrderController::class,'userOrder']);
 
 //update Notice
 Route::get('notice',[HomePageController::class,'notice']);
