@@ -75,7 +75,7 @@ class CronJobController extends Controller
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
                             'RA-SECRET-KEY' => 'kpDvM4m9AOTl0+4Gcnvm7a+VgLJFjSNvuDVC9Jl6wH/RxXJqqCb0RQ==',
-                        ])->post('http://15.235.147.4/topup', [
+                        ])->post('http://103.240.4.29:4000/topup', [
                             "playerId"   => $order->customer_data,
                             "denom"      => $d,
                             "type"       => $type,
