@@ -7,19 +7,26 @@ use App\Models\HelpLine;
 use App\Models\SliderImages;
 use App\Models\UpdateNotice;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
-    public function index(){
-        $sliderImages = SliderImages::all();
-        $notice = DB::table('notice_update')->first();
+    public function index()
+    {
+        $sliderImages = Cache::remember('slider_images', 86400, function () {
+            return SliderImages::all();
+        });
+
+        $notice = Cache::remember('notice_update', 86400, function () {
+            return DB::table('notice_update')->first();
+        });
+
         return response()->json([
             'status' => true,
             'sliderImages' => $sliderImages,
             'update' => $notice,
         ]);
     }
-
     public function notice()
     {
         $notice = UpdateNotice::all();
