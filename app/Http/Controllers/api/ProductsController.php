@@ -6,12 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Categorie;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProductsController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        $page = request('page', 1); // pagination এর জন্য current page track করা দরকার
 
-        $products = Categorie::with('products')->paginate(50);
+        $products = Cache::remember("categories_page_{$page}", 3600, function () {
+            return Categorie::with('products')->orderBy('sort')->paginate(50);
+        });
+
         return response()->json([
             'status' => true,
             'data' => $products->items(),
