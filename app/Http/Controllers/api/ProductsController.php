@@ -11,12 +11,7 @@ class ProductsController extends Controller
 {
     public function index(){
 
-        $products = Categorie::with(['products' => function ($q) {
-            $q->withCount('reviews'); // ekhane review_count ashbe
-        }])
-            ->select('name','id')
-            ->orderBy('sort')
-            ->paginate(50);
+        $products = Categorie::with('products')->paginate(50);
         return response()->json([
             'status' => true,
             'data' => $products->items(),
