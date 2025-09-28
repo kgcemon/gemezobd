@@ -95,5 +95,8 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
 Route::get('auto-top-up-cron',[CronJobController::class,'freeFireAutoTopUpJob']);
 
+//privacy
+Route::get('privacy-policy',[\App\Http\Controllers\SiteController::class,'privacyPolicy']);
+
 // Authentication Routes
 require __DIR__ . '/auth.php';
