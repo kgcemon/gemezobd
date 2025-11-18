@@ -15,13 +15,6 @@ class CronJobController extends Controller
     public function freeFireAutoTopUpJob()
     {
 
-        $lockFile = storage_path('locks/freefire_cron.lock');
-
-        if (file_exists($lockFile)) {
-            exit("Another instance is running.");
-        }
-
-        file_put_contents($lockFile, getmypid());
 
         try {
 
@@ -134,7 +127,7 @@ class CronJobController extends Controller
                 return $exception->getMessage();
             }
         }    finally {
-            @unlink($lockFile);
+
         }
     }
 
