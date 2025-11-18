@@ -97,7 +97,7 @@ class CronJobController extends Controller
                                 "pacakge" => "$d",
                                 "code" => "$code->code",
                                 "orderid" => "$order->id",
-                                "url" => "https://webhook.site/2787b80c-0e00-4f14-b6cf-d8fbf1eaab3f",
+                                "url" => "https://gamezobd.com/api/auto-webhooks",
                                 "shell_balance" => 28,
                                 "ourstock" => "1"
                             ]);
