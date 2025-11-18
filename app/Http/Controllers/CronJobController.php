@@ -94,9 +94,9 @@ class CronJobController extends Controller
                                 'RA-SECRET-KEY' => 'kpDvM4m9AOTl0+4Gcnvm7a+VgLJFjSNvuDVC9Jl6wH/RxXJqqCb0RQ==',
                             ])->post('http://15.235.147.112:3333/complete', [
                                 "playerid" => trim($order->customer_data),
-                                "pacakge" => $d,
-                                "code" => $code->code,
-                                "orderid" => $order->id,
+                                "pacakge" => "$d",
+                                "code" => "$code->code",
+                                "orderid" => "$order->id",
                                 "url" => "https://webhook.site/2787b80c-0e00-4f14-b6cf-d8fbf1eaab3f",
                                 "shell_balance" => 28,
                                 "ourstock" => "1"
