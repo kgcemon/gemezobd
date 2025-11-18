@@ -8,7 +8,6 @@ use App\Models\Code;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\WalletTransaction;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -21,20 +20,34 @@ class WebHooksController extends Controller
     {
         $data = $request->input();
 
-        if (!$data || !isset($data['uid'])) {
+        if (!$data) {
             return response()->json(['status' => false, 'message' => 'Invalid data'], 400);
         }
 
         $status = $data['status'] ?? null;
         $message = $data['message'] ?? null;
-        $uid = $data['uid'];
+        $uid = !isset($data['uid']) ? null : $data['uid'];
+        if (!$uid && isset($data['orderid'])) {
+            $uid = $data["orderid"] ?? null;
+            $message = $data["nickname"];
+            if ($message == null){
+                $message = $data["content"];
+            }
+            $status = $data['status'] == 'success' ? 'true' : 'false';
+        }
 
-        $order = Order::where('order_note', $uid)->first();
+        $order = Order::where('order_note', $uid)->first() ?? null;
         $user = $order ? User::find($order->user_id) : null;
+        $usedCode = Code::where('uid', $uid)->first() ?? null;
 
         if ($order) {
             if ($status == 'true') {
                 $order->status = 'delivered';
+                if ($usedCode) {
+                    $usedCode->active = 1;
+                    $usedCode->note = $message ?? 'delivered';
+                    $usedCode->save();
+                }
                 $order->save();
                 if ($user) {
                     try {
@@ -51,7 +64,6 @@ class WebHooksController extends Controller
                 }
             } else {
                 $order->status = 'Delivery Running';
-                $usedCode = Code::where('uid', $uid)->first();
                 if ($usedCode) {
                     $usedCode->active = false;
                     $usedCode->note = $message ?? null;
@@ -59,11 +71,11 @@ class WebHooksController extends Controller
                 }
             }
 
-            if ($message != null) {
+            if ($message !== null) {
                 $order->order_note = $message;
-                if (Str::contains($message, 'Invalid player ID')){
+                if ($message == 'Invalid Player ID'){
                     $order->status = 'refunded';
-                    if ($user != null) {
+                    if ($user) {
                         $user->increment('wallet', $order->total);
                         $user->save();
                         WalletTransaction::create([
@@ -100,6 +112,33 @@ class WebHooksController extends Controller
 
             return response()->json(['status' => true, 'message' => 'Order updated']);
         } else {
+            if ($status == 'true') {
+                if ($usedCode) {
+                    $usedCode->active = true;
+                    $usedCode->note = $message ?? null;
+                    $usedCode->save();
+                    $order = Order::where('id', $usedCode->order_id)->first() ?? null;
+                    if ($order) {
+                        $order->order_note = $message;
+                        $order->status = 'delivered';
+                        $order->save();
+                    }
+                }
+
+            }else {
+                if ($usedCode) {
+                    $usedCode->active = false;
+                    $usedCode->note = $message ?? null;
+                    $usedCode->save();
+                    $order = Order::where('id', $usedCode->order_id)->first() ?? null;
+                    if ($order != null) {
+                        $order->order_note = $message;
+                        $order->status = 'Delivery Running';
+                        $order->save();
+                    }
+                }
+
+            }
             return response()->json(['status' => false, 'message' => 'Order not found'], 404);
         }
     }

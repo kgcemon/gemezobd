@@ -100,11 +100,13 @@ class CronJobController extends Controller
                                 'Accept' => 'application/json',
                                 'RA-SECRET-KEY' => 'kpDvM4m9AOTl0+4Gcnvm7a+VgLJFjSNvuDVC9Jl6wH/RxXJqqCb0RQ==',
                             ])->post('http://15.235.147.4/topup', [
-                                "playerId"   => $order->customer_data,
-                                "denom"      => $d,
-                                "type"       => $type,
-                                "voucherCode"=> $code->code,
-                                "webhook"    => "https://admin.gmpapa.com/api/auto-webhooks"
+                                "playerid" => trim($order->customer_data),
+                                "pacakge" => $d,
+                                "code" => $code->code,
+                                "orderid" => $order->id,
+                                "url" => "https://codmshopbd.com/myapp/automation/backups-webhook.php",
+                                "shell_balance" => 28,
+                                "ourstock" => "1"
                             ]);
 
                         }catch (\Exception $exception){$order->order_note = 'server error';}
