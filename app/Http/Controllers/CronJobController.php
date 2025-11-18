@@ -105,9 +105,9 @@ class CronJobController extends Controller
                         }catch (\Exception $exception){$order->order_note = 'server error';}
 
                         $data = $response->json();
-                        $uid = $data['uid'] ?? null;
+                        $uid = $data['uid'] ?? $order->id;
                         $order->status = 'Delivery Running';
-                        $order->order_note = $uid ?? null;
+                        $order->order_note = $uid ?? $order->id;
                         $order->save();
                         $code->status = 'used';
                         $code->uid = $uid ?? null;
