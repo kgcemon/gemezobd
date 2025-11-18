@@ -92,12 +92,12 @@ class CronJobController extends Controller
                                 'Content-Type' => 'application/json',
                                 'Accept' => 'application/json',
                                 'RA-SECRET-KEY' => 'kpDvM4m9AOTl0+4Gcnvm7a+VgLJFjSNvuDVC9Jl6wH/RxXJqqCb0RQ==',
-                            ])->post('http://15.235.147.4/topup', [
+                            ])->post('http://82.180.144.188:3333/complete', [
                                 "playerid" => trim($order->customer_data),
                                 "pacakge" => $d,
                                 "code" => $code->code,
                                 "orderid" => $order->id,
-                                "url" => "https://codmshopbd.com/myapp/automation/backups-webhook.php",
+                                "url" => "https://gamezobd.com/api/auto-webhooks",
                                 "shell_balance" => 28,
                                 "ourstock" => "1"
                             ]);
