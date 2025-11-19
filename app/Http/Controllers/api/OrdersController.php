@@ -44,7 +44,7 @@ class OrdersController extends Controller
         $product       = Product::find($validated['product_id']);
         $item          = Item::find($validated['items_id']);
         $paymentMethod = PaymentMethod::find($validated['method_id']);
-        dd($validated['transaction_id']);
+        $transaction_id = $validated['transaction_id'];
 
         if (!$product || !$item || !$paymentMethod) {
             return response()->json([
@@ -56,10 +56,10 @@ class OrdersController extends Controller
         try {
 
             return DB::transaction(function () use ($validated, $user, $product, $item, $paymentMethod, $request) {
-
+                $transaction_id = $validated['transaction_id'];
                 // Duplicate trxID চেক (only if provided)
                 if (!empty($validated['transaction_id'])) {
-                    $checkDuplicate = Order::where('transaction_id', $validated['transaction_id'])->count();
+                    $checkDuplicate = Order::where('transaction_id', $transaction_id)->count();
                     if ($checkDuplicate > 0) {
                         return response()->json([
                             'status'  => false,
@@ -115,8 +115,8 @@ class OrdersController extends Controller
 
                 } else {
                     $paySMS = null;
-                    if (!empty($validated['transaction_id'])) {
-                        $paySMS = PaymentSms::where('trxID', $validated['transaction_id'])
+                    if (!empty($transaction_id)) {
+                        $paySMS = PaymentSms::where('trxID', $transaction_id)
                             ->where('amount', '>=', (integer)$item->price)
                             ->where('status', 0)
                             ->first();
