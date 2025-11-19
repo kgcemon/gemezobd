@@ -120,8 +120,8 @@ class OrdersController extends Controller
                             ->where('amount', '>=', (integer)$item->price)
                             ->where('status', 0)
                             ->first();
+                        dd($paySMS);
                     }
-                    dd($paySMS);
 
                     if ($paySMS != null) {
                         $order->transaction_id = $paySMS->trxID;
