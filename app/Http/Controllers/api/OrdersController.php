@@ -44,6 +44,7 @@ class OrdersController extends Controller
         $product       = Product::find($validated['product_id']);
         $item          = Item::find($validated['items_id']);
         $paymentMethod = PaymentMethod::find($validated['method_id']);
+        dd($validated['transaction_id']);
 
         if (!$product || !$item || !$paymentMethod) {
             return response()->json([
