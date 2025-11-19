@@ -120,6 +120,7 @@ class OrdersController extends Controller
                             ->where('status', 0)
                             ->first();
                     }
+                    dd($paySMS);
 
                     if ($paySMS != null) {
                         $order->transaction_id = $paySMS->trxID;
