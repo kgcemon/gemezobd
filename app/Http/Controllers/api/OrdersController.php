@@ -34,7 +34,7 @@ class OrdersController extends Controller
             'customer_data'  => 'required',
             'method_id'     => 'required|exists:payment_methods,id',
             'uid'           => 'required|string',
-            'transaction_id' => 'nullable|string',
+            'transaction_id' => 'required|string',
             'number' => 'nullable|string',
         ];
 
