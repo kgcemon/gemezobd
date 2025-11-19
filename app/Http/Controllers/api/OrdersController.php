@@ -117,10 +117,9 @@ class OrdersController extends Controller
                     $paySMS = null;
                     if (!empty($transaction_id)) {
                         $paySMS = PaymentSms::where('trxID', $transaction_id)
-                            ->where('amount', '>=', (integer)$item->price)
+                            ->where('amount', '>=', $item->price)
                             ->where('status', 0)
                             ->first();
-                        dd($paySMS);
                     }
 
                     if ($paySMS != null) {
