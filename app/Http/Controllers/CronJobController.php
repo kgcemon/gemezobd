@@ -214,13 +214,13 @@ class CronJobController extends Controller
                 "pacakge" => "$denom",
                 "code" => "shell",
                 "orderid" => $order->id,
-                "url" => "https://gamezobd.com/api/auto-webhooks",
+                "url" => "https://webhook.site/1e1707fb-9cd7-4264-aa42-2be0eff0dd14",
                 "username" => "bdbondff00007",
                 "password" => "@@B0nD007@1",
                 "autocode" => "OQOCQOAYFR6AIW6C",
                 "tgbotid" => "701657976",
                 "shell_balance" => 28,
-                "ourstock" => 1
+                "ourstock" => 1,
             ]);
         }catch (\Exception $exception){
             return false;
