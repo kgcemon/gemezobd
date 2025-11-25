@@ -205,7 +205,7 @@ class CronJobController extends Controller
     {
         $denom = (string) $order->item->denom ?? '';
 
-        $url =  'https://webhook.site/1e1707fb-9cd7-4264-aa42-2be0eff0dd14';
+        $url =  'http://15.235.147.112:3333/complete';
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
@@ -214,8 +214,8 @@ class CronJobController extends Controller
                 "pacakge" => "$denom",
                 "code" => "shell",
                 "orderid" => $order->id,
-                "url" => "https://webhook.site/1e1707fb-9cd7-4264-aa42-2be0eff0dd14",
-                "username" => "bdbondff00007",
+                "url" => "https://gamezobd.com/api/auto-webhooks",
+                "username" => "525957713",
                 "password" => "@@B0nD007@1",
                 "autocode" => "OQOCQOAYFR6AIW6C",
                 "tgbotid" => "701657976",
