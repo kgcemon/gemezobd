@@ -26,7 +26,7 @@ class WebHooksController extends Controller
 
         $status = $data['status'] ?? null;
         $message = $data['message'] ?? null;
-        $uid = !isset($data['uid']) ? null : $data['uid'];
+        $uid = !isset($data['orderid']) ? null : $data['uid'];
         if (!$uid && isset($data['orderid'])) {
             $uid = $data["orderid"] ?? null;
             if ($message == null){

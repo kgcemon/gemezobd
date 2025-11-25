@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SendPinsMail;
+use App\Models\Api;
 use App\Models\Code;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +19,21 @@ class CronJobController extends Controller
         try {
 
             $orders = Order::where('status', 'processing')->whereNull('order_note')->limit(4)->get();
+            $denomsForShell = ["108593", "108592", "108591", "108590", "108589", "108588", "LITE", "3D", "7D", "30D"];
 
             try {
                 foreach ($orders as $order) {
                     DB::beginTransaction();
+
+                    if (in_array($order->item->denom, $denomsForShell)) {
+                        $success = $this->shellsTopUp($order);
+                        if ($success) {
+                            DB::commit();
+                        } else {
+                            DB::rollBack();
+                        }
+                        continue;
+                    }
 
                     if ($order->item->denom === "2000") {
                         $success = $this->sendGiftCard($order);
@@ -99,7 +110,7 @@ class CronJobController extends Controller
                                 "orderid" => $order->id,
                                 "url" => "https://gamezobd.com/api/auto-webhooks",
                                 "shell_balance" => 28,
-                                "ourstock" => "1"
+                                "ourstock" => "1",
                             ]);
 
                         }catch (\Exception $exception){$order->order_note = 'server error';}
@@ -183,18 +194,44 @@ class CronJobController extends Controller
 
             DB::commit();
 
-            // Mail send after commit
-            try {
-                Mail::to($email)->send(new SendPinsMail($order->name ?? 'Customer', $pins));
-            } catch (\Exception $exception) {
-                \Log::error("SendPinsMail failed for order {$order->id}: {$exception->getMessage()}");
-            }
-
             return true;
         } catch (\Exception $exception) {
             DB::rollBack();
             return false;
         }
+    }
+
+    public function shellsTopUp($order): bool
+    {
+        $denom = (string) $order->item->denom ?? '';
+
+        $url =  'http://15.235.147.112:3333/complete';
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ],)->post($url,[
+                "playerid" => "$order->customer_data",
+                "pacakge" => "$denom",
+                "code" => "shell",
+                "orderid" => $order->id,
+                "url" => "https://gamezobd.com/api/auto-webhooks",
+                "username" => "bondff07@gmail.com",
+                "password" => "@@B0nD007@1",
+                "autocode" => "OQOCQOAYFR6AIW6C",
+                "tgbotid" => "701657976",
+                "shell_balance" => 28,
+                "ourstock" => 1
+            ]);
+        }catch (\Exception $exception){
+            return false;
+        }
+        if ($response->successful()) {
+            $order->order_note = $order->id;
+            $order->status = 'Delivery Running';
+            $order->save();
+            return true;
+        }
+        return false;
     }
 
 
