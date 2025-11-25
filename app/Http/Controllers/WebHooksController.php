@@ -35,7 +35,7 @@ class WebHooksController extends Controller
             $status = $data['status'] == 'success' ? 'true' : 'false';
         }
 
-        $order = Order::where('order_note', $uid)->first() ?? null;
+        $order = Order::where('order_id', $uid)->first() ?? null;
         $user = $order ? User::find($order->user_id) : null;
         $usedCode = Code::where('uid', $uid)->first() ?? null;
 
